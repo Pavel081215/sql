@@ -1,0 +1,225 @@
+                                                                                                         1) создаём таблику (сотрудников) employee :
+
+CREATE TABLE employee (
+    id              int primary key not null,
+    surname         varchar(80) not null,        
+    name            varchar(80) not null,          
+    birthDay        date,          
+    phone           bigint,
+    position        varchar(50),
+    salary          bigint
+);
+
+ Для информации  генерация автоматического кода  - (не брать для работы)
+CREATE TABLE public.employee
+(
+  id integer NOT NULL,
+  surname character varying(80) NOT NULL,
+  name character varying(80) NOT NULL,
+  birthday date,
+  phone integer,
+  "position" character varying(50),
+  salary money,
+  CONSTRAINT employee_pkey PRIMARY KEY (id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE public.employee
+  OWNER TO "Myhome";
+
+
+                                                                                                       2) создаём таблику ingredients:
+
+CREATE TABLE ingredients (
+    ID              int primary key not null,
+    ingredient      varchar(50) not null
+   
+);
+
+                                                                                                       3) заполняем значениями таблицы  employee и ingredients:
+
+INSERT INTO ingredients VALUES (1, 'Cabbage');
+INSERT INTO ingredients VALUES (2, 'Carrot');
+INSERT INTO ingredients VALUES (3, 'Potato');
+INSERT INTO ingredients VALUES (4, 'Squash');
+INSERT INTO ingredients VALUES (5, 'Meat');
+
+select *from ingredients; - проверяем ingredients:
+
+INSERT INTO employee VALUES (1,'Khlopkov' , 'Ivan' , '1994-11-27' , 05011122212 , 'waiter' , 2500 );
+INSERT INTO employee VALUES (2,'Ivanov' , 'Denis' , '1998-01-12' , 050166612 , 'senior cook' , 3500 );
+INSERT INTO employee VALUES (3,'Coodry' , 'Vladimir' , '1985-04-14' , 05011444212 , 'senior waiter' , 6500 );
+
+INSERT INTO employee VALUES (4,'Degtyr' , 'Oleg' , '1977-09-02' , 0502245212 , 'cook' , 12500 );
+
+INSERT INTO employee (id, surname , name , position)
+    VALUES (5, 'Franco' , 'Sergeu', 'cleaner');
+                                                                                                     4) разные SELECT  выборки
+select *from employee; 
+select surname  from employee;
+select *  from employee where salary >6500; 
+select *  from employee order by salary ;
+select *  from employee order by birthDay ;
+
+INSERT INTO employee VALUES (6,'Elena' , 'Prelay' , '1976-04-23' , 0503345212 , 'senior waiter' , 6500 );
+
+select *  from employee 
+
+select position, count (id) from employee  group  by position 
+
+select position, count (id) as quantity  from employee  group  by position          
+select position, count (id) as quantity  from employee  group  by position order by quantity
+
+select position, count (id) as quantity  from employee  group  by position order by quantity asc
+select position, count (id) as quantity  from employee  group  by position order by quantity desc
+  												   5) создаем таблицу склад
+
+CREATE TABLE stock (
+    id              int primary key not null,
+    ingredient      varchar(80) not null,        
+    quantity        bigint,
+    ingredient_id   int primary
+   
+);
+  
+                                                                                                 6) разные изменения в таблице
+alter table ingredients add column temperature int; 
+
+alter table stock  add constraint  ingredients_is foreign key (ingredient_id) references ingredients (ID); 
+                         
+
+Для информации  генерация автоматического кода  - (не брать для работы)
+ALTER TABLE public.stock
+  ADD CONSTRAINT ingredients_is FOREIGN KEY (ingredient_id)
+      REFERENCES public.ingredients (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION;
+
+          			                                  				 7) заполняем таблицу stock (склад)  
+
+
+INSERT INTO stock VALUES (1,'Cabbage' , 200 , 1 );
+INSERT INTO stock VALUES (2,'Carrot' , 200 , 2 );
+INSERT INTO stock VALUES (3,'Potato' , 200 , 3 );
+INSERT INTO stock VALUES (4,'Cabbage' , 200 , 4 );
+INSERT INTO stock VALUES (5,'Squash' , 200 , 5 );
+INSERT INTO stock VALUES (6,'Meat' , 200 , 5 );
+                                                                                               8) изменение в таблице stock (склад)
+
+UPDATE stock SET ingredient_id = 1 WHERE id = 4;
+ UPDATE stock SET ingredient_id = 4 WHERE id = 5;
+  UPDATE stock SET ingredient_id = 5 WHERE id = 6;       
+                										9) выборки из таблицы stock (склад)
+                                                                                                
+ 
+select ingredient, count (ingredient_id) from stock   group  by ingredient	
+select ingredient, count (ingredient_id) as quantity  from stock  group  by ingredient order by quantity asc
+
+ 												10) создаем  и заполняем таблицу dish (Блюдо) создаём зависимости constraint
+CREATE TABLE dish (
+    id              int primary key not null,
+    title           varchar(80) not null,        
+    category        varchar(80) not null,  
+    ingredient_1    int not null,
+    ingredient_2    int,
+    ingredient_3    int,
+    cost            bigint,
+    weight          bigint
+);
+
+
+
+INSERT INTO dish VALUES (1,'soup','First', 2, 1 , 3 , 2 , 135 , 350 );
+INSERT INTO dish VALUES (2,'risotto','Second', 2, 4 , 5 , 2, 335 , 450 );
+select *  from dish
+
+alter table dish  add constraint  ingredients_is foreign key (ingredient_1) references ingredients (ID); 
+alter table dish  add constraint  ingredients_is foreign key (ingredient_2) references ingredients (ID);
+alter table dish  add constraint  ingredients_is foreign key (ingredient_3) references ingredients (ID);
+
+INSERT INTO dish VALUES (3,'pasta', 'First', 2 , 3 , 4 , 450 , 150 );
+
+select *  from dish
+
+                                                                                               11) создаем  и заполняем таблицу menu (меню) создаём зависимости constraint  
+
+CREATE TABLE menu (
+    id              int primary key not null,
+    title           varchar(80) not null,        
+    dish_1    int not null,
+    dish_2    int
+    );
+
+alter table menu  add constraint  dish_is1 foreign key (dish_1) references dish (id); 
+alter table menu  add constraint  dish_is2 foreign key (dish_2) references dish (id);
+
+
+INSERT INTO menu VALUES (1,'Spring', 2, 1 );
+select *  from menu
+INSERT INTO menu VALUES (2,'Autumn', 3, 1 );
+select *  from menu
+
+                                                                                             12) создаем  и заполняем таблицу order (заказ) создаём зависимости constraint 
+
+CREATE TABLE order_name (
+    ID              bigint primary key not null,
+    waiter          int not null,        
+    dish_1          int not null,
+    dish_2          int,
+    dish_3          int,
+    table_number    int,
+    time            date
+    );
+
+alter table order_name  add constraint   waiter_who  foreign key (waiter) references employee (id); 
+alter table order_name  add constraint   dish_1  foreign key (dish_1) references dish (id);
+alter table order_name  add constraint   dish_2  foreign key (dish_2) references dish (id);
+alter table order_name  add constraint   dish_3  foreign key (dish_3) references dish (id);
+
+INSERT INTO order_name VALUES (1000,2,2,1,3,12,'2016-05-24');
+select *  from order_name
+
+
+INSERT INTO order_name (ID, waiter , dish_1, table_number )
+    VALUES (2000, 5 , 3, 13);
+
+select *  from order_name
+
+INSERT INTO order_name (ID, waiter , dish_1,dish_3, table_number ,time)
+    VALUES (3000, 4 , 3,1, 16, '2016-05-24');
+
+select *  from order_name
+
+
+
+ 
+                                                                                             13) создаем  и заполняем таблицу cooked_meals (приготовленные блюда) создаём зависимости constraint 
+
+CREATE TABLE cooked_meals (
+    ID_dish         bigint primary key not null,
+    dish            int not null,
+    cook            int not null,        
+    order_name      int not null,
+    time            date
+    );
+
+alter table cooked_meals  add constraint   dish  foreign key (dish) references dish (id); 
+alter table cooked_meals  add constraint   cook  foreign key (cook) references employee (id);
+alter table cooked_meals  add constraint   order_name  foreign key (order_name) references order_name (ID);
+
+
+
+INSERT INTO cooked_meals VALUES (10000,2,2,1000,'2016-05-24');
+INSERT INTO cooked_meals VALUES (20000,1,2,1000,'2016-05-24');
+INSERT INTO cooked_meals VALUES (30000,3,2,1000,'2016-05-24');
+
+INSERT INTO cooked_meals VALUES (40000,3,3,2000,'2016-05-24');
+
+INSERT INTO cooked_meals VALUES (50000,1,3,3000,'2016-05-24');
+INSERT INTO cooked_meals VALUES (60000,3,1,3000,'2016-05-24');
+
+select *  from cooked_meals
+
+
+
+
