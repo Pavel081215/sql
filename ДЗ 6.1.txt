@@ -222,4 +222,12 @@ select *  from cooked_meals
 
 
 
+                                                                                            14)INNER JOIN
+
+
+
+
+
+select cooked_meals.ID_dish, employee.surname,  cooked_meals.time  from cooked_meals INNER JOIN employee  on cooked_meals.cook = employee.ID
+
 
